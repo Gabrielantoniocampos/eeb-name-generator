@@ -28,11 +28,8 @@ def limpar_texto(texto):
     texto = re.sub(r"\s+", " ", texto)
     return texto.strip().upper()
 
-def bot_message(texto, delay=None):
-    """Simula interação do bot com spinner de 3 a 5 segundos."""
-    if delay is None:
-        delay = random.uniform(3.0, 5.0) # Define o tempo entre 3 e 5 segundos
-        
+def bot_message(texto, delay=2.0):
+    """Simula interação do bot com spinner fixo de 2 segundos."""
     pensamentos = [
         "🤔 Analisando os parâmetros...", 
         "🔎 Consultando o padrão corporativo...", 
@@ -54,13 +51,19 @@ st.set_page_config(
 )
 
 # ==============================
-# ESTILO CSS
+# ESTILO CSS (INCLUINDO ÍCONE DO USUÁRIO)
 # ==============================
 st.markdown("""
 <style>
-    /* Estilo dos Avatares */
-    [data-testid="stChatMessageAvatarAssistant"] { background-color: #007bff !important; }
-    [data-testid="stChatMessageAvatarUser"] { background-color: #333333 !important; }
+    /* Estilo do Avatar do Assistente (Azul) */
+    [data-testid="stChatMessageAvatarAssistant"] { 
+        background-color: #007bff !important; 
+    }
+    
+    /* Estilo do Avatar do Usuário (Cinza) */
+    [data-testid="stChatMessageAvatarUser"] { 
+        background-color: #333333 !important; 
+    }
 
     /* Botão Padrão */
     div.stButton > button {
@@ -85,7 +88,6 @@ st.markdown("""
 
     button[key="lista_fixa"]:hover {
         background-color: #a71d2a !important;
-        border: none !important;
     }
 
     /* Botão Primário (Verde) */
@@ -97,12 +99,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================
-# HEADER (LOGO 80% REDUZIDA)
+# HEADER (LOGO CENTRALIZADA)
 # ==============================
-col1, col2, col3 = st.columns([1, 0.4, 1]) # Layout para centralizar a logo pequena
+col1, col2, col3 = st.columns([1, 0.4, 1]) 
 with col2:
     try:
-        # 80% reduzida significa exibir em 20% do tamanho ou apenas escala menor
         st.image("EBB LOGO PRETO.png", use_container_width=True) 
     except:
         pass
@@ -145,7 +146,6 @@ if st.session_state.step == 99:
 # ==============================
 else:
     if st.session_state.step == 1:
-        # Boas vindas com delay maior para ser lido
         with st.chat_message("assistant"): 
             st.write("Olá! 👋 Sou seu assistente de padronização. Vamos batizar esse documento?")
         tipo = st.selectbox("Selecione o Tipo de Contrato:", list(TIPOS.keys()))
@@ -156,7 +156,8 @@ else:
 
     elif st.session_state.step == 2:
         bot_message("Ótimo. Agora, selecione o **selo** correspondente.")
-        selo = st.selectbox("Selo:", SELOS)
+        with st.chat_message("user"): # Exemplo de uso do chat do usuário
+             selo = st.selectbox("Selo:", SELOS)
         if st.button("Confirmar", type="primary"):
             st.session_state.data["selo"] = limpar_texto(selo)
             st.session_state.step = 3
@@ -164,7 +165,8 @@ else:
 
     elif st.session_state.step == 3:
         bot_message("Entendido. Qual o **ano ou série**?")
-        ano = st.selectbox("Ano/Série:", ANOS)
+        with st.chat_message("user"):
+            ano = st.selectbox("Ano/Série:", ANOS)
         if st.button("Confirmar", type="primary"):
             st.session_state.data["ano"] = limpar_texto(ano)
             st.session_state.step = 4
@@ -172,7 +174,8 @@ else:
 
     elif st.session_state.step == 4:
         bot_message("Perfeito. Qual o **segmento** de ensino?")
-        seg = st.selectbox("Segmento:", list(SEGMENTOS.keys()))
+        with st.chat_message("user"):
+            seg = st.selectbox("Segmento:", list(SEGMENTOS.keys()))
         if st.button("Confirmar", type="primary"):
             st.session_state.data["segmento"] = SEGMENTOS[seg]
             st.session_state.step = 5
@@ -180,7 +183,8 @@ else:
 
     elif st.session_state.step == 5:
         bot_message("Estamos quase lá. Quem é o **autor**?")
-        autor = st.text_input("Nome do Autor:")
+        with st.chat_message("user"):
+            autor = st.text_input("Nome do Autor:")
         if st.button("Confirmar", type="primary"):
             if autor.strip():
                 st.session_state.data["autor"] = limpar_texto(autor)
@@ -191,7 +195,8 @@ else:
 
     elif st.session_state.step == 6:
         bot_message("Agora, me diga o nome da **obra**.")
-        obra = st.text_input("Título da Obra:")
+        with st.chat_message("user"):
+            obra = st.text_input("Título da Obra:")
         if st.button("Confirmar", type="primary"):
             if obra.strip():
                 st.session_state.data["obra"] = limpar_texto(obra)
@@ -214,7 +219,8 @@ else:
 
     elif st.session_state.step == 70:
         bot_message("Pode informar o **ID da solicitação**, por favor?")
-        id_sol = st.text_input("ID:")
+        with st.chat_message("user"):
+            id_sol = st.text_input("ID:")
         if st.button("Finalizar", type="primary"):
             if id_sol.strip():
                 st.session_state.data["id_terceiros"] = limpar_texto(id_sol)
@@ -224,11 +230,14 @@ else:
                 st.error("Insira o ID para finalizar.")
 
     elif st.session_state.step == 8:
-        bot_message("Tudo pronto! Aqui está a nomenclatura padronizada:", delay=2.0)
+        bot_message("Tudo pronto! Aqui está a nomenclatura padronizada:")
         d = st.session_state.data
         res = [d['tipo'], d['selo'], d['autor'], d['obra'], d['ano'], d['segmento']]
         if d.get("terceiros"): res.append(d['id_terceiros'])
-        st.code(" - ".join(res), language="text")
+        
+        with st.chat_message("user"): # Resultado envolto no ícone do usuário para manter o padrão
+            st.code(" - ".join(res), language="text")
+        
         if st.button("🔄 Gerar outro nome"):
             st.session_state.clear()
             st.rerun()
