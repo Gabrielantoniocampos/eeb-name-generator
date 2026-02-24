@@ -109,7 +109,7 @@ with col2:
         pass
 
 st.markdown("<h1 style='text-align:center;'>EEB GENERATOR NAME</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center;color:gray;'>Padronização de documentos corporativos</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center;color:gray;'>Diga-me os detalhes, e eu te dou o nome perfeito. Evite o caos nos arquivos: eu transformo suas informações em nomes de documentos padronizados e prontos para o uso institucional.</p>", unsafe_allow_html=True)
 st.markdown("---")
 
 # ==============================
@@ -147,7 +147,7 @@ if st.session_state.step == 99:
 else:
     if st.session_state.step == 1:
         with st.chat_message("assistant"): 
-            st.write("Olá! 👋 Sou seu assistente de padronização. Vamos batizar esse documento?")
+            st.write("👋 Olá! Tudo certo por aqui. Me diga os detalhes do documento e eu gero o nome em segundos. Vamos lá?")
         
         with st.chat_message("user"):
             tipo = st.selectbox("Selecione o Tipo de Contrato:", list(TIPOS.keys()))
