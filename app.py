@@ -74,12 +74,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================
-# HEADER CENTRALIZADO (AJUSTADO PARA GITHUB)
+# HEADER CENTRALIZADO (LOGO 3/4)
 # ==============================
 try:
-    col_fora1, col_logo, col_fora2 = st.columns([2, 2, 2])
+    col_fora1, col_logo, col_fora2 = st.columns([3, 2, 3])  # antes era [2,2,2]
     with col_logo:
-        # AJUSTE AQUI: Removi o /content/ pois no GitHub o arquivo estará na raiz
         st.image("EBB LOGO PRETO.png", use_container_width=True)
 except:
     st.warning("⚠️ Logo não encontrado no repositório.")
