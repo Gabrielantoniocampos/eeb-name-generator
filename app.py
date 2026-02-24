@@ -14,212 +14,187 @@ import time
 import random
 
 # ==============================
-# FUNÇÕES AUXILIARES
+# CONFIGURAÇÃO E DADOS
+# ==============================
+st.set_page_config(page_title="EEB Name Generator", page_icon="📄", layout="centered")
+
+TIPOS = {"Aditivos": "ADT", "Cartas": "CRT", "Cessão de direitos": "CDDA", "Distratos": "DIS", "Contratos de edição e termos": "CE", "Termos": "TRM"}
+SEGMENTOS = {"Ensino Infantil": "EI", "Ensino Fundamental Anos Iniciais": "EFAI", "Ensino Fundamental Anos Finais": "EFAF", "Ensino Médio": "EM", "Ensino Médio Pré Vestibular": "EM PV"}
+SELOS = ["Ática","Scipione","Saraiva","Anglo","PH","SOMOS","Amplia","Ético","Fibonacci","PLURALL","Rede Cristã","Videoaulas","Pitágoras","Mind Makers","Maxi","Farias Brito","Eduall"]
+ANOS = ["1° Ano","2° Ano","3° Ano","4° Ano","5° Ano","6° Ano","7° Ano","8° Ano","9° Ano","1° Série","2° Série","4° Série"]
+
+# ==============================
+# FUNÇÕES DE PERSONALIDADE
 # ==============================
 def limpar_texto(texto):
-    """Normaliza strings para o padrão corporativo (sem acentos, uppercase)."""
-    if not texto:
-        return ""
-    texto = unicodedata.normalize("NFKD", texto)
-    texto = texto.encode("ASCII", "ignore").decode("ASCII")
-    texto = texto.replace("°", "")
-    texto = re.sub(r"[^\w\s-]", "", texto)
-    texto = re.sub(r"\s+", " ", texto)
-    return texto.strip().upper()
+    if not texto: return ""
+    texto = unicodedata.normalize("NFKD", texto).encode("ASCII", "ignore").decode("ASCII")
+    return re.sub(r"[^\w\s-]", "", texto).replace("°", "").strip().upper()
 
-def bot_message(texto, delay=0.5):
-    """Simula interação do bot com spinner."""
-    pensamentos = ["🤔 Pensando...", "🔎 Analisando...", "✍️ Preparando...", "📄 Organizando..."]
+def bot_talk(tipo="interacao"):
+    frases = {
+        "boas_vindas": [
+            "Olá! 👋 Sou seu assistente de padronização. Vamos batizar esse documento?",
+            "Pronto para mais uma organização? Vamos gerar esse nome padrão EEB!",
+            "Opa! Deixa comigo a parte chata da nomenclatura. O que temos para hoje?"
+        ],
+        "pensando": [
+            "🤔 Processando os metadados...", "🔎 Consultando as regras de ETL...", 
+            "✍️ Formatando conforme o padrão...", "📄 Quase lá, ajustando os sufixos..."
+        ],
+        "sucesso": [
+            "Perfeito! Aqui está o nome pronto para o SharePoint:",
+            "Nomenclatura gerada com sucesso. Só copiar e colar!",
+            "Tudo certo! Padronização é o segredo de um bom BI."
+        ]
+    }
+    return random.choice(frases[tipo])
+
+def bot_message(texto, delay=0.6):
     with st.chat_message("assistant"):
-        with st.spinner(random.choice(pensamentos)):
+        with st.spinner(random.choice(["Analisando...", "Formatando...", "Organizando..."])):
             time.sleep(delay)
         st.markdown(texto)
 
 # ==============================
-# CONFIGURAÇÃO DA PÁGINA
-# ==============================
-st.set_page_config(
-    page_title="EEB Name Generator",
-    page_icon="📄",
-    layout="centered"
-)
-
-# ==============================
-# ESTILO CSS (FORÇA O BOTÃO VERMELHO À DIREITA)
+# ESTILO CSS (O BOTÃO VERMELHO AGORA VAI!)
 # ==============================
 st.markdown("""
 <style>
-    /* Estilo dos Avatares */
     [data-testid="stChatMessageAvatarAssistant"] { background-color: #007bff !important; }
     [data-testid="stChatMessageAvatarUser"] { background-color: #333333 !important; }
+    
+    /* Botões padrão */
+    div.stButton > button { background-color: #333333; color: white; border-radius: 8px; }
 
-    /* Botão Padrão */
-    div.stButton > button {
-        background-color: #333333;
-        color: white;
-        border-radius: 8px;
-    }
-
-    /* BOTÃO LISTA: VERMELHO E ALINHADO À DIREITA */
-    /* Container do botão */
+    /* BOTÃO LISTA: VERMELHO E DIREITA */
     div[data-testid="stVerticalBlock"] > div:has(button[key="lista_fixa"]) {
-        display: flex !important;
-        justify-content: flex-end !important;
+        display: flex !important; justify-content: flex-end !important;
     }
-
-    /* O botão em si */
     button[key="lista_fixa"] {
-        background-color: #dc3545 !important;
-        color: white !important;
-        border: none !important;
-        padding: 0.5rem 1.2rem !important;
-        font-weight: bold !important;
+        background-color: #dc3545 !important; color: white !important;
+        border: none !important; font-weight: bold !important;
     }
-
-    button[key="lista_fixa"]:hover {
-        background-color: #a71d2a !important;
-        border: none !important;
-    }
+    button[key="lista_fixa"]:hover { background-color: #a71d2a !important; }
 
     /* Botão Primário (Verde) */
-    div.stButton > button[kind="primary"] {
-        background-color: #28a745 !important;
-        border: none !important;
-    }
+    div.stButton > button[kind="primary"] { background-color: #28a745 !important; border: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
 # ==============================
 # HEADER
 # ==============================
-# Tenta carregar a logo local, se falhar usa um placeholder ou ignora
 try:
-    st.image("logo.png", width=200) # Recomendo renomear sua logo para logo.png no repo
+    st.image("logo.png", width=180)
 except:
     pass
 
 st.markdown("<h1 style='text-align:center;'>EEB GENERATOR NAME</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center;color:gray;'>Padronização de documentos corporativos</p>", unsafe_allow_html=True)
 st.markdown("---")
 
-# ==============================
-# DICIONÁRIOS DE DADOS
-# ==============================
-TIPOS = {"Aditivos": "ADT", "Cartas": "CRT", "Cessão de direitos": "CDDA", "Distratos": "DIS", "Contratos de edição e termos": "CE", "Termos": "TRM"}
-SEGMENTOS = {"Ensino Infantil": "EI", "Ensino Fundamental Anos Iniciais": "EFAI", "Ensino Fundamental Anos Finais": "EFAF", "Ensino Médio": "EM", "Ensino Médio Pré Vestibular": "EM PV"}
-SELOS = ["Ática","Scipione","Saraiva","Anglo","PH","SOMOS","Amplia","Ético","Fibonacci","PLURALL","Rede Cristã","Videoaulas","Pitágoras","Mind Makers","Maxi","Farias Brito","Eduall"]
-ANOS = ["1° Ano","2° Ano","3° Ano","4° Ano","5° Ano","6° Ano","7° Ano","8° Ano","9° Ano","1° Série","2° Série","4° Série"]
-
-# Inicialização do Estado
 if "step" not in st.session_state:
     st.session_state.step = 1
     st.session_state.data = {}
 
 # ==============================
-# VIEW: LISTA DE ABREVIAÇÕES (STEP 99)
+# TELAS (STEPS)
 # ==============================
 if st.session_state.step == 99:
-    st.subheader("📋 Referência de Abreviações")
+    st.subheader("📋 Tabela de Referência")
     c1, c2 = st.columns(2)
     with c1:
-        st.write("**Contratos**")
-        for k, v in TIPOS.items(): st.code(f"{v} : {k}")
+        st.info("**Contratos**")
+        for k, v in TIPOS.items(): st.markdown(f"`{v}` : {k}")
     with c2:
-        st.write("**Segmentos**")
-        for k, v in SEGMENTOS.items(): st.code(f"{v} : {k}")
-    
-    if st.button("⬅️ Voltar"):
+        st.info("**Segmentos**")
+        for k, v in SEGMENTOS.items(): st.markdown(f"`{v}` : {k}")
+    if st.button("⬅️ Voltar ao Início"):
         st.session_state.step = 1
         st.rerun()
 
-# ==============================
-# VIEW: FLUXO PRINCIPAL
-# ==============================
 else:
-    # Lógica de Steps
     if st.session_state.step == 1:
-        with st.chat_message("assistant"): st.write("Olá! Vamos gerar o nome do seu documento.")
-        tipo = st.selectbox("Selecione o Tipo de Contrato:", list(TIPOS.keys()))
-        if st.button("Confirmar", type="primary"):
+        with st.chat_message("assistant"): st.write(bot_talk("boas_vindas"))
+        tipo = st.selectbox("Qual o tipo de contrato?", list(TIPOS.keys()))
+        if st.button("Próximo", type="primary"):
             st.session_state.data["tipo"] = TIPOS[tipo]
             st.session_state.step = 2
             st.rerun()
 
     elif st.session_state.step == 2:
-        bot_message("Qual o **selo**?")
+        bot_message("Entendido. Agora, selecione o **selo** correspondente.")
         selo = st.selectbox("Selo:", SELOS)
-        if st.button("Confirmar", type="primary"):
+        if st.button("Confirmar Selo", type="primary"):
             st.session_state.data["selo"] = limpar_texto(selo)
             st.session_state.step = 3
             st.rerun()
 
     elif st.session_state.step == 3:
-        bot_message("Qual o **ano/série**?")
+        bot_message("Certo! E qual o **ano ou série** dessa obra?")
         ano = st.selectbox("Ano/Série:", ANOS)
-        if st.button("Confirmar", type="primary"):
+        if st.button("Avançar", type="primary"):
             st.session_state.data["ano"] = limpar_texto(ano)
             st.session_state.step = 4
             st.rerun()
 
     elif st.session_state.step == 4:
-        bot_message("Selecione o **segmento**.")
+        bot_message("Boa. Quase acabando... selecione o **segmento**.")
         seg = st.selectbox("Segmento:", list(SEGMENTOS.keys()))
-        if st.button("Confirmar", type="primary"):
+        if st.button("Confirmar Segmento", type="primary"):
             st.session_state.data["segmento"] = SEGMENTOS[seg]
             st.session_state.step = 5
             st.rerun()
 
     elif st.session_state.step == 5:
-        bot_message("Quem é o **autor**?")
-        autor = st.text_input("Nome do Autor:")
-        if st.button("Confirmar", type="primary") and autor:
+        bot_message("Me diga o nome do **autor** (vou formatar para você).")
+        autor = st.text_input("Autor:")
+        if st.button("Gravar Autor", type="primary") and autor:
             st.session_state.data["autor"] = limpar_texto(autor)
             st.session_state.step = 6
             st.rerun()
 
     elif st.session_state.step == 6:
-        bot_message("Qual o nome da **obra**?")
-        obra = st.text_input("Título da Obra:")
-        if st.button("Confirmar", type="primary") and obra:
+        bot_message("E o título da **obra**?")
+        obra = st.text_input("Obra:")
+        if st.button("Gerar Base", type="primary") and obra:
             st.session_state.data["obra"] = limpar_texto(obra)
             st.session_state.step = 7
             st.rerun()
 
     elif st.session_state.step == 7:
-        bot_message("É solicitação de terceiros?")
-        col1, col2 = st.columns(2)
-        if col1.button("Sim", type="primary", use_container_width=True):
+        bot_message("Este documento veio de uma **solicitação de terceiros**?")
+        c1, c2 = st.columns(2)
+        if c1.button("Sim, tem ID", type="primary", use_container_width=True):
             st.session_state.data["terceiros"] = True
             st.session_state.step = 70
             st.rerun()
-        if col2.button("Não", use_container_width=True):
+        if c2.button("Não, fluxo normal", use_container_width=True):
             st.session_state.data["terceiros"] = False
             st.session_state.step = 8
             st.rerun()
 
     elif st.session_state.step == 70:
-        bot_message("Insira o **ID da solicitação**.")
+        bot_message("Pode informar o **ID da solicitação**, por favor?")
         id_sol = st.text_input("ID:")
-        if st.button("Finalizar", type="primary") and id_sol:
+        if st.button("Finalizar Nome", type="primary") and id_sol:
             st.session_state.data["id_terceiros"] = limpar_texto(id_sol)
             st.session_state.step = 8
             st.rerun()
 
     elif st.session_state.step == 8:
-        bot_message("✅ Nome gerado!")
+        bot_message(bot_talk("sucesso"))
         d = st.session_state.data
-        nome_final = f"{d['tipo']} - {d['selo']} - {d['autor']} - {d['obra']} - {d['ano']} - {d['segmento']}"
-        if d.get("terceiros"):
-            nome_final += f" - {d['id_terceiros']}"
+        res = [d['tipo'], d['selo'], d['autor'], d['obra'], d['ano'], d['segmento']]
+        if d.get("terceiros"): res.append(d['id_terceiros'])
         
-        st.code(nome_final, language="text")
+        st.code(" - ".join(res), language="text")
         
-        if st.button("🔄 Novo Nome"):
+        if st.button("🔄 Criar outro nome"):
             st.session_state.clear()
             st.rerun()
 
-    # Botão de Lista (Sempre visível no fluxo normal)
     st.write("---")
-    if st.button("📋 Lista de Abreviações", key="lista_fixa"):
+    if st.button("📋 Ver Abreviações", key="lista_fixa"):
         st.session_state.step = 99
         st.rerun()
