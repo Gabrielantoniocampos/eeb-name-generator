@@ -73,12 +73,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ==============================
-# HEADER CENTRALIZADO (LOGO AJUSTADO)
-# ==============================
-col1, col2, col3 = st.columns([1, 1, 1]) # Colunas iguais
-with col2: # Usa a coluna do meio
-    st.image("EBB LOGO PRETO.png", width=120) # Ajuste o width conforme o gosto
+try:
+    col_fora1, col_logo, col_fora2 = st.columns([2, 2, 2])
+    with col_logo:
+        st.image(
+            "/content/EBB LOGO PRETO.png",
+            width=180  # ajuste aqui (ex: 150–220)
+        )
+except:
+    st.warning("⚠️ Logo não encontrado. Verifique se o arquivo está na pasta do Colab.")
 
 # Centralização do título e subtítulo via HTML
 st.markdown("""
