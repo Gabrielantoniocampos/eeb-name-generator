@@ -73,23 +73,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# ==============================
+# HEADER CENTRALIZADO (AJUSTADO PARA GITHUB)
+# ==============================
 try:
     col_fora1, col_logo, col_fora2 = st.columns([2, 2, 2])
     with col_logo:
-        st.image(
-            "/content/EBB LOGO PRETO.png",
-            width=180  # ajuste aqui (ex: 150–220)
-        )
+        # AJUSTE AQUI: Removi o /content/ pois no GitHub o arquivo estará na raiz
+        st.image("EBB LOGO PRETO.png", use_container_width=True)
 except:
-    st.warning("⚠️ Logo não encontrado. Verifique se o arquivo está na pasta do Colab.")
-
-# Centralização do título e subtítulo via HTML
-st.markdown("""
-    <div style="text-align: center;">
-        <h1>EEB GENERATOR NAME</h1>
-        <p style="color: gray;">Diga-me os detalhes, e eu te dou o nome perfeito.</p>
-    </div>
-""", unsafe_allow_html=True)
+    st.warning("⚠️ Logo não encontrado no repositório.")
 
 st.markdown('<div class="header-container">', unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center;'>EEB GENERATOR NAME</h1>", unsafe_allow_html=True)
