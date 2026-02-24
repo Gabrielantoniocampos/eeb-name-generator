@@ -85,7 +85,7 @@ except:
 
 st.markdown('<div class="header-container">', unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center;'>EEB GENERATOR NAME</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: gray;'>Diga-me os detalhes, e eu te dou o nome perfeito.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray;'>Diga-me os detalhes, e eu te dou o nome perfeito. Evite o caos nos arquivos: eu transformo suas informações em nomes de documentos padronizados e prontos para o uso institucional.</p>", unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 st.markdown("---")
 
