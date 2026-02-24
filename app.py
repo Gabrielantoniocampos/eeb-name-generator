@@ -74,16 +74,19 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================
-# HEADER CENTRALIZADO (LOGO REDUZIDO)
+# HEADER CENTRALIZADO (LOGO AJUSTADO)
 # ==============================
-try:
-    col_fora1, col_logo, col_fora2 = st.columns([2, 2, 2])
-    with col_logo:
-        # ALTERAÇÃO AQUI: Retirei o use_container_width e coloquei width=100
-        # Você pode testar valores como 80, 120 ou 150 até ficar do tamanho que deseja
-        st.image("EBB LOGO PRETO.png", width=100) 
-except:
-    st.warning("⚠️ Logo não encontrado no repositório.")
+col1, col2, col3 = st.columns([1, 1, 1]) # Colunas iguais
+with col2: # Usa a coluna do meio
+    st.image("EBB LOGO PRETO.png", width=120) # Ajuste o width conforme o gosto
+
+# Centralização do título e subtítulo via HTML
+st.markdown("""
+    <div style="text-align: center;">
+        <h1>EEB GENERATOR NAME</h1>
+        <p style="color: gray;">Diga-me os detalhes, e eu te dou o nome perfeito.</p>
+    </div>
+""", unsafe_allow_html=True)
 
 st.markdown('<div class="header-container">', unsafe_allow_html=True)
 st.markdown("<h1 style='text-align: center;'>EEB GENERATOR NAME</h1>", unsafe_allow_html=True)
