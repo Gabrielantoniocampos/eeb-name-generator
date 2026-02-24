@@ -28,8 +28,11 @@ def limpar_texto(texto):
     texto = re.sub(r"\s+", " ", texto)
     return texto.strip().upper()
 
-def bot_message(texto, delay=0.5):
-    """Simula interação do bot com spinner."""
+def bot_message(texto, delay=None):
+    """Simula interação do bot com spinner de 3 a 5 segundos."""
+    if delay is None:
+        delay = random.uniform(3.0, 5.0) # Define o tempo entre 3 e 5 segundos
+        
     pensamentos = [
         "🤔 Analisando os parâmetros...", 
         "🔎 Consultando o padrão corporativo...", 
@@ -51,7 +54,7 @@ st.set_page_config(
 )
 
 # ==============================
-# ESTILO CSS (FORÇA O BOTÃO VERMELHO À DIREITA)
+# ESTILO CSS
 # ==============================
 st.markdown("""
 <style>
@@ -67,13 +70,11 @@ st.markdown("""
     }
 
     /* BOTÃO LISTA: VERMELHO E ALINHADO À DIREITA */
-    /* Container do botão */
     div[data-testid="stVerticalBlock"] > div:has(button[key="lista_fixa"]) {
         display: flex !important;
         justify-content: flex-end !important;
     }
 
-    /* O botão em si */
     button[key="lista_fixa"] {
         background-color: #dc3545 !important;
         color: white !important;
@@ -96,12 +97,15 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================
-# HEADER
+# HEADER (LOGO 80% REDUZIDA)
 # ==============================
-try:
-    st.image("logo.png", width=200)
-except:
-    pass
+col1, col2, col3 = st.columns([1, 0.4, 1]) # Layout para centralizar a logo pequena
+with col2:
+    try:
+        # 80% reduzida significa exibir em 20% do tamanho ou apenas escala menor
+        st.image("EBB LOGO PRETO.png", use_container_width=True) 
+    except:
+        pass
 
 st.markdown("<h1 style='text-align:center;'>EEB GENERATOR NAME</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center;color:gray;'>Padronização de documentos corporativos</p>", unsafe_allow_html=True)
@@ -115,7 +119,6 @@ SEGMENTOS = {"Ensino Infantil": "EI", "Ensino Fundamental Anos Iniciais": "EFAI"
 SELOS = ["Ática","Scipione","Saraiva","Anglo","PH","SOMOS","Amplia","Ético","Fibonacci","PLURALL","Rede Cristã","Videoaulas","Pitágoras","Mind Makers","Maxi","Farias Brito","Eduall"]
 ANOS = ["1° Ano","2° Ano","3° Ano","4° Ano","5° Ano","6° Ano","7° Ano","8° Ano","9° Ano","1° Série","2° Série","4° Série"]
 
-# Inicialização do Estado
 if "step" not in st.session_state:
     st.session_state.step = 1
     st.session_state.data = {}
@@ -142,7 +145,9 @@ if st.session_state.step == 99:
 # ==============================
 else:
     if st.session_state.step == 1:
-        with st.chat_message("assistant"): st.write("Olá! 👋 Sou seu assistente de padronização. Vamos batizar esse documento?")
+        # Boas vindas com delay maior para ser lido
+        with st.chat_message("assistant"): 
+            st.write("Olá! 👋 Sou seu assistente de padronização. Vamos batizar esse documento?")
         tipo = st.selectbox("Selecione o Tipo de Contrato:", list(TIPOS.keys()))
         if st.button("Confirmar", type="primary"):
             st.session_state.data["tipo"] = TIPOS[tipo]
@@ -177,7 +182,7 @@ else:
         bot_message("Estamos quase lá. Quem é o **autor**?")
         autor = st.text_input("Nome do Autor:")
         if st.button("Confirmar", type="primary"):
-            if autor.strip(): # SÓ AVANÇA SE NÃO ESTIVER VAZIO
+            if autor.strip():
                 st.session_state.data["autor"] = limpar_texto(autor)
                 st.session_state.step = 6
                 st.rerun()
@@ -188,7 +193,7 @@ else:
         bot_message("Agora, me diga o nome da **obra**.")
         obra = st.text_input("Título da Obra:")
         if st.button("Confirmar", type="primary"):
-            if obra.strip(): # SÓ AVANÇA SE NÃO ESTIVER VAZIO
+            if obra.strip():
                 st.session_state.data["obra"] = limpar_texto(obra)
                 st.session_state.step = 7
                 st.rerun()
@@ -219,19 +224,15 @@ else:
                 st.error("Insira o ID para finalizar.")
 
     elif st.session_state.step == 8:
-        bot_message("Tudo pronto! Aqui está a nomenclatura padronizada:")
+        bot_message("Tudo pronto! Aqui está a nomenclatura padronizada:", delay=2.0)
         d = st.session_state.data
         res = [d['tipo'], d['selo'], d['autor'], d['obra'], d['ano'], d['segmento']]
-        if d.get("terceiros"):
-            res.append(d['id_terceiros'])
-        
+        if d.get("terceiros"): res.append(d['id_terceiros'])
         st.code(" - ".join(res), language="text")
-        
         if st.button("🔄 Gerar outro nome"):
             st.session_state.clear()
             st.rerun()
 
-    # Botão de Lista
     st.write("---")
     if st.button("📋 Lista de Abreviações", key="lista_fixa"):
         st.session_state.step = 99
