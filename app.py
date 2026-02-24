@@ -65,7 +65,7 @@ st.markdown("""
         background-color: #333333 !important; 
     }
 
-    /* Botão Padrão (Cinza) */
+    /* Botão Padrão */
     div.stButton > button {
         background-color: #333333;
         color: white;
@@ -149,7 +149,8 @@ else:
         with st.chat_message("assistant"): 
             st.write("Olá! 👋 Sou seu assistente de padronização. Vamos batizar esse documento?")
         
-        tipo = st.selectbox("Selecione o Tipo de Contrato:", list(TIPOS.keys()))
+        with st.chat_message("user"):
+            tipo = st.selectbox("Selecione o Tipo de Contrato:", list(TIPOS.keys()))
         if st.button("Confirmar", type="primary"):
             st.session_state.data["tipo"] = TIPOS[tipo]
             st.session_state.step = 2
@@ -157,7 +158,8 @@ else:
 
     elif st.session_state.step == 2:
         bot_message("Ótimo. Agora, selecione o **selo** correspondente.")
-        selo = st.selectbox("Selo:", SELOS)
+        with st.chat_message("user"):
+            selo = st.selectbox("Selo:", SELOS)
         if st.button("Confirmar", type="primary"):
             st.session_state.data["selo"] = limpar_texto(selo)
             st.session_state.step = 3
@@ -165,7 +167,8 @@ else:
 
     elif st.session_state.step == 3:
         bot_message("Entendido. Qual o **ano ou série**?")
-        ano = st.selectbox("Ano/Série:", ANOS)
+        with st.chat_message("user"):
+            ano = st.selectbox("Ano/Série:", ANOS)
         if st.button("Confirmar", type="primary"):
             st.session_state.data["ano"] = limpar_texto(ano)
             st.session_state.step = 4
@@ -173,7 +176,8 @@ else:
 
     elif st.session_state.step == 4:
         bot_message("Perfeito. Qual o **segmento** de ensino?")
-        seg = st.selectbox("Segmento:", list(SEGMENTOS.keys()))
+        with st.chat_message("user"):
+            seg = st.selectbox("Segmento:", list(SEGMENTOS.keys()))
         if st.button("Confirmar", type="primary"):
             st.session_state.data["segmento"] = SEGMENTOS[seg]
             st.session_state.step = 5
@@ -181,7 +185,8 @@ else:
 
     elif st.session_state.step == 5:
         bot_message("Estamos quase lá. Quem é o **autor**?")
-        autor = st.text_input("Nome do Autor:")
+        with st.chat_message("user"):
+            autor = st.text_input("Nome do Autor:")
         if st.button("Confirmar", type="primary"):
             if autor.strip():
                 st.session_state.data["autor"] = limpar_texto(autor)
@@ -192,7 +197,8 @@ else:
 
     elif st.session_state.step == 6:
         bot_message("Agora, me diga o nome da **obra**.")
-        obra = st.text_input("Título da Obra:")
+        with st.chat_message("user"):
+            obra = st.text_input("Título da Obra:")
         if st.button("Confirmar", type="primary"):
             if obra.strip():
                 st.session_state.data["obra"] = limpar_texto(obra)
@@ -215,7 +221,8 @@ else:
 
     elif st.session_state.step == 70:
         bot_message("Pode informar o **ID da solicitação**, por favor?")
-        id_sol = st.text_input("ID:")
+        with st.chat_message("user"):
+            id_sol = st.text_input("ID:")
         if st.button("Finalizar", type="primary"):
             if id_sol.strip():
                 st.session_state.data["id_terceiros"] = limpar_texto(id_sol)
@@ -230,9 +237,8 @@ else:
         res = [d['tipo'], d['selo'], d['autor'], d['obra'], d['ano'], d['segmento']]
         if d.get("terceiros"): res.append(d['id_terceiros'])
         
-        # O ícone do usuário aparece SOMENTE aqui para mostrar o resultado final
-        with st.chat_message("user"):
-            st.code(" - ".join(res), language="text")
+        # O resultado final aparece SEM o chat_message("user")
+        st.code(" - ".join(res), language="text")
         
         if st.button("🔄 Gerar outro nome"):
             st.session_state.clear()
