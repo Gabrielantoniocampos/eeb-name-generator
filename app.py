@@ -30,7 +30,12 @@ def limpar_texto(texto):
 
 def bot_message(texto, delay=0.5):
     """Simula interação do bot com spinner."""
-    pensamentos = ["🤔 Pensando...", "🔎 Analisando...", "✍️ Preparando...", "📄 Organizando..."]
+    pensamentos = [
+        "🤔 Analisando os parâmetros...", 
+        "🔎 Consultando o padrão corporativo...", 
+        "✍️ Preparando a nomenclatura...", 
+        "📄 Organizando metadados..."
+    ]
     with st.chat_message("assistant"):
         with st.spinner(random.choice(pensamentos)):
             time.sleep(delay)
@@ -93,9 +98,8 @@ st.markdown("""
 # ==============================
 # HEADER
 # ==============================
-# Tenta carregar a logo local, se falhar usa um placeholder ou ignora
 try:
-    st.image("logo.png", width=200) # Recomendo renomear sua logo para logo.png no repo
+    st.image("logo.png", width=200)
 except:
     pass
 
@@ -137,9 +141,8 @@ if st.session_state.step == 99:
 # VIEW: FLUXO PRINCIPAL
 # ==============================
 else:
-    # Lógica de Steps
     if st.session_state.step == 1:
-        with st.chat_message("assistant"): st.write("Olá! Vamos gerar o nome do seu documento.")
+        with st.chat_message("assistant"): st.write("Olá! 👋 Sou seu assistente de padronização. Vamos batizar esse documento?")
         tipo = st.selectbox("Selecione o Tipo de Contrato:", list(TIPOS.keys()))
         if st.button("Confirmar", type="primary"):
             st.session_state.data["tipo"] = TIPOS[tipo]
@@ -147,7 +150,7 @@ else:
             st.rerun()
 
     elif st.session_state.step == 2:
-        bot_message("Qual o **selo**?")
+        bot_message("Ótimo. Agora, selecione o **selo** correspondente.")
         selo = st.selectbox("Selo:", SELOS)
         if st.button("Confirmar", type="primary"):
             st.session_state.data["selo"] = limpar_texto(selo)
@@ -155,7 +158,7 @@ else:
             st.rerun()
 
     elif st.session_state.step == 3:
-        bot_message("Qual o **ano/série**?")
+        bot_message("Entendido. Qual o **ano ou série**?")
         ano = st.selectbox("Ano/Série:", ANOS)
         if st.button("Confirmar", type="primary"):
             st.session_state.data["ano"] = limpar_texto(ano)
@@ -163,7 +166,7 @@ else:
             st.rerun()
 
     elif st.session_state.step == 4:
-        bot_message("Selecione o **segmento**.")
+        bot_message("Perfeito. Qual o **segmento** de ensino?")
         seg = st.selectbox("Segmento:", list(SEGMENTOS.keys()))
         if st.button("Confirmar", type="primary"):
             st.session_state.data["segmento"] = SEGMENTOS[seg]
@@ -171,23 +174,29 @@ else:
             st.rerun()
 
     elif st.session_state.step == 5:
-        bot_message("Quem é o **autor**?")
+        bot_message("Estamos quase lá. Quem é o **autor**?")
         autor = st.text_input("Nome do Autor:")
-        if st.button("Confirmar", type="primary") and autor:
-            st.session_state.data["autor"] = limpar_texto(autor)
-            st.session_state.step = 6
-            st.rerun()
+        if st.button("Confirmar", type="primary"):
+            if autor.strip(): # SÓ AVANÇA SE NÃO ESTIVER VAZIO
+                st.session_state.data["autor"] = limpar_texto(autor)
+                st.session_state.step = 6
+                st.rerun()
+            else:
+                st.error("Por favor, insira o nome do autor para continuar.")
 
     elif st.session_state.step == 6:
-        bot_message("Qual o nome da **obra**?")
+        bot_message("Agora, me diga o nome da **obra**.")
         obra = st.text_input("Título da Obra:")
-        if st.button("Confirmar", type="primary") and obra:
-            st.session_state.data["obra"] = limpar_texto(obra)
-            st.session_state.step = 7
-            st.rerun()
+        if st.button("Confirmar", type="primary"):
+            if obra.strip(): # SÓ AVANÇA SE NÃO ESTIVER VAZIO
+                st.session_state.data["obra"] = limpar_texto(obra)
+                st.session_state.step = 7
+                st.rerun()
+            else:
+                st.error("O título da obra é obrigatório.")
 
     elif st.session_state.step == 7:
-        bot_message("É solicitação de terceiros?")
+        bot_message("Este documento é referente a uma **solicitação de terceiros**?")
         col1, col2 = st.columns(2)
         if col1.button("Sim", type="primary", use_container_width=True):
             st.session_state.data["terceiros"] = True
@@ -199,27 +208,30 @@ else:
             st.rerun()
 
     elif st.session_state.step == 70:
-        bot_message("Insira o **ID da solicitação**.")
+        bot_message("Pode informar o **ID da solicitação**, por favor?")
         id_sol = st.text_input("ID:")
-        if st.button("Finalizar", type="primary") and id_sol:
-            st.session_state.data["id_terceiros"] = limpar_texto(id_sol)
-            st.session_state.step = 8
-            st.rerun()
+        if st.button("Finalizar", type="primary"):
+            if id_sol.strip():
+                st.session_state.data["id_terceiros"] = limpar_texto(id_sol)
+                st.session_state.step = 8
+                st.rerun()
+            else:
+                st.error("Insira o ID para finalizar.")
 
     elif st.session_state.step == 8:
-        bot_message("✅ Nome gerado!")
+        bot_message("Tudo pronto! Aqui está a nomenclatura padronizada:")
         d = st.session_state.data
-        nome_final = f"{d['tipo']} - {d['selo']} - {d['autor']} - {d['obra']} - {d['ano']} - {d['segmento']}"
+        res = [d['tipo'], d['selo'], d['autor'], d['obra'], d['ano'], d['segmento']]
         if d.get("terceiros"):
-            nome_final += f" - {d['id_terceiros']}"
+            res.append(d['id_terceiros'])
         
-        st.code(nome_final, language="text")
+        st.code(" - ".join(res), language="text")
         
-        if st.button("🔄 Novo Nome"):
+        if st.button("🔄 Gerar outro nome"):
             st.session_state.clear()
             st.rerun()
 
-    # Botão de Lista (Sempre visível no fluxo normal)
+    # Botão de Lista
     st.write("---")
     if st.button("📋 Lista de Abreviações", key="lista_fixa"):
         st.session_state.step = 99
