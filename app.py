@@ -74,13 +74,14 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================
-# HEADER CENTRALIZADO (AJUSTADO PARA GITHUB)
+# HEADER CENTRALIZADO (LOGO REDUZIDO)
 # ==============================
 try:
     col_fora1, col_logo, col_fora2 = st.columns([2, 2, 2])
     with col_logo:
-        # AJUSTE AQUI: Removi o /content/ pois no GitHub o arquivo estará na raiz
-        st.image("EBB LOGO PRETO.png", use_container_width=True)
+        # ALTERAÇÃO AQUI: Retirei o use_container_width e coloquei width=100
+        # Você pode testar valores como 80, 120 ou 150 até ficar do tamanho que deseja
+        st.image("EBB LOGO PRETO.png", width=100) 
 except:
     st.warning("⚠️ Logo não encontrado no repositório.")
 
