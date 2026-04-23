@@ -115,9 +115,9 @@ st.markdown("---")
 # ==============================
 # DICIONÁRIOS DE DADOS
 # ==============================
-TIPOS = {"Acordo de confidencialidade":"ACF","Aditivos":"ADT","Cartas":"CRT","Cessão de direitos":"CCDA","Contrato de edição":"CED","Contrato de prestação de serviços":"CPS","Contratos de edição e termos":"CE", "Contrato de ilustração" : "CIL", "Declaração de autoria":"DAT","Distratos":"DIS","Fatura":"FAT","Proposta":"PRO","Recibo":"REC","Relatório":"REL","Relatório + Recibos":"RLR","Termo de autorização":"TAU","Termos":"TRM"}
+TIPOS = {"Acordo de confidencialidade":"ACF","Aditivos":"ADT","Cartas":"CRT","Cessão de direitos":"CCDA","Contrato de edição":"CED","Contrato de ilustração":"CIL","Contrato de prestação de serviços":"CPS","Contratos de edição e termos":"CE","Declaração de autoria":"DAT","Distratos":"DIS","Fatura":"FAT","Proposta":"PRO","Recibo":"REC","Relatório":"REL","Relatório + Recibos":"RLR","Termo de autorização":"TAU","Termos":"TRM"}
 SEGMENTOS = {"Ensino Infantil": "EI", "Ensino Fundamental Anos Iniciais": "EFAI", "Ensino Fundamental Anos Finais": "EFAF", "Ensino Médio": "EM", "Ensino Médio Pré Vestibular": "EM PV"}
-SELOS = ["Ática","Scipione","Saraiva","Anglo","PH","SOMOS","Amplia","Ético","Fibonacci","PLURALL","Rede Cristã","Videoaulas","Pitágoras","Mind Makers","Maxi","Farias Brito","Eduall"]
+SELOS = ["Amplia","Anglo","Ática","B2B","Eduall","Ético","Farias Brito","Fibonacci","Maxi","Mind Makers","PH","Pitágoras","PLURALL","Rede Cristã","Saraiva","Scipione","SOMOS","Videoaulas"]
 ANOS = ["1° Ano","2° Ano","3° Ano","4° Ano","5° Ano","6° Ano","7° Ano","8° Ano","9° Ano","1° Série","2° Série","3° Série","4° Série"]
 
 if "step" not in st.session_state:
